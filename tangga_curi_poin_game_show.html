@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tangga Curi Poin - Game Show Trivia Indonesia</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', '"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            pop: {
+              canvas: '#FAFAFD',
+              ink: '#18181B',
+              pink: '#D81B60',
+              pinkHover: '#D83A64',
+              pinkLight: '#FDF2F4',
+              blue: '#0EA5E9',
+              blueHover: '#0284C7',
+              blueLight: '#F0F9FF',
+              amber: '#F59E0B',
+              amberLight: '#FEF3C7',
+              green: '#10B981',
+              greenLight: '#D1FAE5',
+              purple: '#8B5CF6',
+              purpleLight: '#F3E8FF',
+              card: '#FFFFFF',
+              surface: '#F4F4F5',
+              border: '#18181B',
+            }
+          },
+          boxShadow: {
+            'neo-xs': '1.5px 1.5px 0px #18181B',
+            'neo-sm': '2px 2px 0px #18181B',
+            'neo': '3px 3px 0px #18181B',
+            'neo-md': '4px 4px 0px #18181B',
+            'neo-lg': '6px 6px 0px #18181B',
+            'neo-xl': '8px 8px 0px #18181B',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Neopop Engineering Grid Background from Dribbble Reference */
+    body {
+      background-color: #FAFAFD;
+      background-image: 
+        linear-gradient(to right, rgba(24, 24, 27, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(24, 24, 27, 0.045) 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: #18181B;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #F4F4F5; }
+    ::-webkit-scrollbar-thumb { background: #18181B; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D81B60; }
+
+    /* Text Selection */
+    ::selection {
+      background: #D81B60;
+      color: #FFFFFF;
+    }
+
+    /* Neo-Brutalist / Neo-Pop Utility Classes */
+    .card-neo {
+      background: #FFFFFF;
+      border: 2.5px solid #18181B;
+      box-shadow: 4px 4px 0px #18181B;
+      border-radius: 24px;
+    }
+
+    .card-neo-lg {
+      background: #FFFFFF;
+      border: 3px solid #18181B;
+      box-shadow: 6px 6px 0px #18181B;
+      border-radius: 28px;
+    }
+
+    .btn-neo {
+      border: 2px solid #18181B;
+      box-shadow: 3px 3px 0px #18181B;
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-neo:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px #18181B;
+    }
+    .btn-neo:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0px 0px 0px #18181B;
+    }
+
+    .btn-neo-sm {
+      border: 1.5px solid #18181B;
+      box-shadow: 2px 2px 0px #18181B;
+      transition: all 0.1s ease;
+    }
+    .btn-neo-sm:hover {
+      transform: translate(-0.5px, -0.5px);
+      box-shadow: 2.5px 2.5px 0px #18181B;
+    }
+    .btn-neo-sm:active {
+      transform: translate(1.5px, 1.5px);
+      box-shadow: 0px 0px 0px #18181B;
+    }
+
+    /* Pink Hero Pill Badge inspired by Dribbble "AI Platform" */
+    .pill-highlight-pink {
+      background-color: #D81B60;
+      color: #FFFFFF;
+      border: 2px solid #18181B;
+      box-shadow: 2px 2px 0px #18181B;
+      border-radius: 9999px;
+      padding: 0.2rem 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 800;
+    }
+
+    /* Sticker Badges */
+    .sticker-badge {
+      border: 2px solid #18181B;
+      box-shadow: 2px 2px 0px #18181B;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Tabular numbers */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Fixed bottom dock clearance guarantee */
+    body {
+      padding-bottom: 7.5rem !important;
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-3 md:px-5 md:pt-3">
+
+  <!-- Confetti Canvas for Winners and Correct Celebrations -->
+  <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+  <!-- TOP HEADER CONSOLE (Inspired by Dribbble Navigation Bar) -->
+  <header class="max-w-7xl mx-auto mb-3 bg-white border-[2.5px] border-black rounded-3xl px-4 py-2 sm:px-5 sm:py-2.5 shadow-neo-md flex flex-wrap md:flex-nowrap items-center justify-between gap-2.5">
+    
+    <!-- Brand / Logo -->
+    <div class="flex items-center space-x-3">
+      <div class="w-11 h-11 rounded-2xl bg-[#D81B60] text-white border-2 border-black shadow-neo-sm flex items-center justify-center font-display font-black text-2xl flex-shrink-0">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="font-display font-black text-lg sm:text-xl text-zinc-900 tracking-tight leading-none">
+            TANGGA CURI POIN
+          </h1>
+          <span class="sticker-badge text-[10px] px-2 py-0.5 rounded-full bg-zinc-900 text-white transform -rotate-2">
+            LIVE SHOW ✦
+          </span>
+        </div>
+        <p class="text-[11px] text-zinc-500 font-semibold hidden sm:block mt-0.5">
+          Game Show Trivia Battle Indonesia 4 vs 4 / 5 vs 5
+        </p>
+      </div>
+    </div>
+
+    <!-- Center: Round Navigator -->
+    <div class="flex items-center bg-zinc-50 px-3 py-1.5 rounded-2xl border-2 border-black shadow-neo-sm space-x-2 sm:space-x-3">
+      <button onclick="prevRound()" title="Babak Sebelumnya (Key: Left Arrow)" class="btn-neo-sm p-1 rounded-xl bg-white hover:bg-zinc-100 text-zinc-800">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="text-center min-w-[120px] sm:min-w-[130px]">
+        <div class="flex items-center justify-center space-x-1.5 mb-0.5">
+          <span class="text-[9px] font-black text-zinc-500 uppercase tracking-wider">BABAK</span>
+          <span id="roundStatusTag" class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-200 text-amber-950 border-2 border-black shadow-neo-xs">
+            Sedang Main
+          </span>
+        </div>
+        <div class="font-display font-black text-xs sm:text-sm tracking-wide text-zinc-900" id="roundIndicator">
+          Babak 1 dari 10
+        </div>
+      </div>
+      <button onclick="nextRound()" title="Babak Selanjutnya (Key: Right Arrow)" class="btn-neo-sm p-1 rounded-xl bg-white hover:bg-zinc-100 text-zinc-800">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <!-- Right: Quick Tools & Host Menu -->
+    <div class="flex items-center space-x-2">
+      <!-- Mute/Audio Button -->
+      <button id="soundBtn" onclick="toggleMute()" class="btn-neo p-2 rounded-2xl bg-white hover:bg-zinc-50 text-zinc-800" title="Toggle Suara Game">
+        <svg id="soundIconOn" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+        </svg>
+        <svg id="soundIconOff" class="w-5 h-5 hidden text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+        </svg>
+      </button>
+
+      <!-- Host Secret Peek Toggle Button -->
+      <button onclick="toggleHostPeek()" id="hostPeekBtn" class="btn-neo flex items-center space-x-1.5 px-3 py-2 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-xs" title="Buka/Tutup Contekkan Host (Key: H)">
+        <svg class="w-4 h-4 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+        <span class="hidden lg:inline">Kunci Host (H)</span>
+      </button>
+
+      <!-- Question Manager -->
+      <button onclick="openQuestionModal()" class="btn-neo p-2 rounded-2xl bg-white hover:bg-zinc-50 text-zinc-800" title="Kelola / Edit Soal">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </button>
+
+      <!-- Keyboard Help Modal Trigger -->
+      <button onclick="openHelpModal()" class="btn-neo p-2 rounded-2xl bg-white hover:bg-zinc-50 text-zinc-800" title="Petunjuk Tombol Keyboard (?)">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </button>
+
+      <!-- Fullscreen Toggle -->
+      <button onclick="toggleFullscreen()" class="btn-neo p-2 rounded-2xl bg-white hover:bg-zinc-50 text-zinc-800" title="Layar Penuh (F11)">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="max-w-7xl mx-auto flex flex-col space-y-3">
+
+    <!-- 1. MATCH SCOREBOARD ARENA (RED VS BLUE DUEL) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
+      
+      <!-- TIM MERAH SCORECARD -->
+      <div id="cardTeamMerah" class="lg:col-span-4 card-neo p-3 sm:p-3.5 relative overflow-hidden transition-all duration-200">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#D81B60] text-white border-2 border-black shadow-neo-sm font-display font-black text-lg sm:text-xl flex items-center justify-center flex-shrink-0">
+              A
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <input id="teamName0" type="text" value="TIM MERAH" onchange="updateTeamName(0, this.value)" class="bg-transparent font-display font-black text-lg sm:text-xl text-zinc-900 tracking-tight border-b-2 border-dashed border-rose-300 hover:border-[#D81B60] focus:outline-none focus:border-[#D81B60] w-28 sm:w-36 truncate">
+              </div>
+              <span class="text-[11px] text-rose-600 font-bold tracking-wide flex items-center gap-1.5 mt-0.5">
+                <span class="w-2 h-2 rounded-full bg-[#D81B60]"></span> Tim Penantang 1
+              </span>
+            </div>
+          </div>
+          <div id="turnBadge0" class="hidden sticker-badge px-2.5 py-1 rounded-full text-[10px] bg-[#D81B60] text-white animate-pulse">
+            GILIRAN ✦
+          </div>
+        </div>
+
+        <!-- Big Score Display & Adjusters -->
+        <div class="mt-2 pt-2 border-t-2 border-zinc-100 flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-[10px] font-black uppercase tracking-wider text-zinc-400">Total Skor</span>
+            <span id="scoreTeam0" class="font-display font-black text-4xl sm:text-5xl tracking-tight text-zinc-900 tabular-nums">
+              0
+            </span>
+          </div>
+
+          <!-- Adjusters & Lockout -->
+          <div class="flex flex-col items-end space-y-1.5">
+            <div id="lockoutBadge0" class="hidden flex items-center space-x-1 px-2.5 py-0.5 rounded-xl bg-red-100 border-2 border-black shadow-neo-xs text-red-800 mb-0.5">
+              <svg class="w-3.5 h-3.5 text-red-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              <span class="font-black text-[9px] uppercase tracking-wider text-red-700">TERKUNCI!</span>
+            </div>
+            <div class="flex space-x-1">
+              <button onclick="adjustScore(0, 100)" class="btn-neo-sm px-2 py-0.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-[10px] font-black text-rose-900">+100</button>
+              <button onclick="adjustScore(0, -100)" class="btn-neo-sm px-2 py-0.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-[10px] font-black text-rose-900">-100</button>
+            </div>
+            <div class="flex space-x-1">
+              <button onclick="adjustScore(0, 50)" class="btn-neo-sm px-2 py-0.5 rounded-lg bg-white hover:bg-zinc-100 text-[9px] font-bold text-zinc-700">+50</button>
+              <button onclick="adjustScore(0, -50)" class="btn-neo-sm px-2 py-0.5 rounded-lg bg-white hover:bg-zinc-100 text-[9px] font-bold text-zinc-700">-50</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER MATCH CONTROL & TIMER BAR -->
+      <div class="lg:col-span-4 card-neo p-3 sm:p-3.5 flex flex-col items-center justify-between text-center relative">
+        <div class="w-full">
+          <div class="inline-flex items-center space-x-2 px-3 py-0.5 rounded-full bg-amber-100 border-2 border-black shadow-neo-xs text-amber-950 mb-1">
+            <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/></svg>
+            <span class="text-[11px] font-black tracking-wider uppercase" id="currentCategoryText">KULINER NUSANTARA</span>
+          </div>
+          <div id="statusCallout" class="font-bold text-xs sm:text-sm text-zinc-800 tracking-tight mt-0.5">
+            Giliran Menjawab: <span class="text-[#D81B60] font-black">TIM MERAH</span>
+          </div>
+        </div>
+
+        <div class="relative flex items-center justify-center my-2">
+          <svg class="w-20 h-20 sm:w-22 sm:h-22 transform -rotate-90" viewBox="0 0 112 112">
+            <circle cx="56" cy="56" r="48" stroke="#E4E4E7" stroke-width="8" fill="transparent" />
+            <circle id="timerProgressCircle" cx="56" cy="56" r="48" stroke="#F59E0B" stroke-width="8" stroke-linecap="round" fill="transparent" stroke-dasharray="301.59" stroke-dashoffset="0" class="transition-all duration-200" />
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span id="timerText" class="font-display font-black text-2xl sm:text-3xl text-zinc-900 leading-none tabular-nums">
+              15
+            </span>
+            <span class="text-[8px] font-black uppercase tracking-widest text-zinc-400 mt-0.5">DETIK</span>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-1.5">
+          <button id="toggleTimerBtn" onclick="toggleTimer()" class="btn-neo px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black text-xs uppercase tracking-wider flex items-center space-x-1">
+            <svg id="timerPlayIcon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+            <svg id="timerPauseIcon" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            <span id="timerBtnLabel">MULAI (T)</span>
+          </button>
+          <button onclick="resetTimer()" class="btn-neo px-2.5 py-1.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-800 text-xs font-bold" title="Reset Waktu (Key: R)">
+            Reset
+          </button>
+          <button onclick="addTimerSeconds(5)" class="btn-neo px-2.5 py-1.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-800 text-xs font-bold" title="Tambah 5 Detik">
+            +5s
+          </button>
+        </div>
+      </div>
+
+      <!-- TIM BIRU SCORECARD -->
+      <div id="cardTeamBiru" class="lg:col-span-4 card-neo p-3 sm:p-3.5 relative overflow-hidden transition-all duration-200">
+        <div class="flex items-center justify-between">
+          <div id="turnBadge1" class="hidden sticker-badge px-2.5 py-1 rounded-full text-[10px] bg-[#0EA5E9] text-white animate-pulse">
+            GILIRAN ✦
+          </div>
+          <div class="flex items-center space-x-3 text-right ml-auto">
+            <div>
+              <div class="flex items-center justify-end space-x-2">
+                <input id="teamName1" type="text" value="TIM BIRU" onchange="updateTeamName(1, this.value)" class="bg-transparent font-display font-black text-lg sm:text-xl text-zinc-900 tracking-tight border-b-2 border-dashed border-sky-300 hover:border-[#0EA5E9] focus:outline-none focus:border-[#0EA5E9] w-28 sm:w-36 text-right truncate">
+              </div>
+              <span class="text-[11px] text-sky-600 font-bold tracking-wide flex items-center justify-end gap-1.5 mt-0.5">
+                Tim Penantang 2 <span class="w-2 h-2 rounded-full bg-[#0EA5E9]"></span>
+              </span>
+            </div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#0EA5E9] text-white border-2 border-black shadow-neo-sm font-display font-black text-lg sm:text-xl flex items-center justify-center flex-shrink-0">
+              B
+            </div>
+          </div>
+        </div>
+
+        <!-- Big Score Display & Adjusters -->
+        <div class="mt-2 pt-2 border-t-2 border-zinc-100 flex items-center justify-between">
+          <!-- Adjusters & Lockout -->
+          <div class="flex flex-col items-start space-y-1.5">
+            <div id="lockoutBadge1" class="hidden flex items-center space-x-1 px-2.5 py-0.5 rounded-xl bg-sky-100 border-2 border-black shadow-neo-xs text-sky-800 mb-0.5">
+              <svg class="w-3.5 h-3.5 text-sky-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              <span class="font-black text-[9px] uppercase tracking-wider text-sky-700">TERKUNCI!</span>
+            </div>
+            <div class="flex space-x-1">
+              <button onclick="adjustScore(1, 100)" class="btn-neo-sm px-2 py-0.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-[10px] font-black text-sky-900">+100</button>
+              <button onclick="adjustScore(1, -100)" class="btn-neo-sm px-2 py-0.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-[10px] font-black text-sky-900">-100</button>
+            </div>
+            <div class="flex space-x-1">
+              <button onclick="adjustScore(1, 50)" class="btn-neo-sm px-2 py-0.5 rounded-lg bg-white hover:bg-zinc-100 text-[9px] font-bold text-zinc-700">+50</button>
+              <button onclick="adjustScore(1, -50)" class="btn-neo-sm px-2 py-0.5 rounded-lg bg-white hover:bg-zinc-100 text-[9px] font-bold text-zinc-700">-50</button>
+            </div>
+          </div>
+
+          <div class="flex flex-col text-right">
+            <span class="text-[10px] font-black uppercase tracking-wider text-zinc-400">Total Skor</span>
+            <span id="scoreTeam1" class="font-display font-black text-4xl sm:text-5xl tracking-tight text-zinc-900 tabular-nums">
+              0
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. ANAK TANGGA PETUNJUK: "KIND OF QUIZZES" 2x2 GRID (Dribbble Ref) -->
+    <section class="space-y-2">
+      <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+        <div class="flex items-center space-x-2.5">
+          <h2 class="font-display font-black text-base sm:text-lg text-zinc-900 tracking-tight flex items-center gap-2">
+            Anak Tangga Petunjuk
+          </h2>
+          <span class="text-xs text-zinc-500 font-semibold hidden md:inline">
+            (Semakin ke bawah, petunjuk semakin jelas tetapi poin berkurang!)
+          </span>
+        </div>
+        <div class="pill-highlight-pink text-xs">
+          <span>Taruhan Aktif:</span>
+          <span id="currentPointsBadge" class="text-white font-black underline">400 POIN</span>
+        </div>
+      </div>
+
+      <!-- 2x2 Clue Cards Grid inspired directly by Dribbble "Kind of Quizzes" -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+
+        <!-- Clue Card 1 (400 Pts - Pink Theme) -->
+        <div id="clueCard0" class="card-neo p-3 sm:p-3.5 transition-all duration-200">
+          <div class="flex items-start space-x-3.5">
+            <!-- Icon Badge -->
+            <div id="badgeClue0" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#D81B60] text-white font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0">
+              <span class="text-[9px] uppercase leading-none font-bold">TINGKAT 1</span>
+              <span>400</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="font-display font-black text-xs sm:text-sm uppercase tracking-wide text-[#D81B60]">
+                  Petunjuk 1 (Sangat Samar & Berisiko)
+                </h3>
+                <span id="clueStatusPill0" class="text-[9px] uppercase font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border-2 border-black shadow-neo-xs">
+                  ✦ DIBUKA
+                </span>
+              </div>
+              <p id="clueText0" class="text-zinc-900 font-bold text-xs sm:text-sm mt-1 leading-snug">
+                Loading petunjuk...
+              </p>
+              <span class="text-[8px] font-black uppercase tracking-widest text-zinc-400 mt-1 block">
+                POTENSI MAKSIMAL
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clue Card 2 (300 Pts - Amber/Orange Theme) -->
+        <div id="clueCard1" class="card-neo p-3 sm:p-3.5 transition-all duration-200 opacity-60">
+          <div class="flex items-start space-x-3.5">
+            <!-- Icon Badge -->
+            <div id="badgeClue1" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#F59E0B] text-zinc-950 font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0">
+              <span class="text-[9px] uppercase leading-none font-bold">TINGKAT 2</span>
+              <span>300</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="font-display font-black text-xs sm:text-sm uppercase tracking-wide text-zinc-600" id="clueTitle1">
+                  Petunjuk 2 (Detail Mendalam)
+                </h3>
+                <span id="clueStatusPill1" class="text-[9px] uppercase font-bold px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600 border border-zinc-300">
+                  🔒 TERKUNCI
+                </span>
+              </div>
+              <p id="clueText1" class="text-zinc-400 font-medium text-xs sm:text-sm mt-1 italic leading-snug">
+                🔒 Petunjuk 2 (300 Poin) masih dirahasiakan di anak tangga.
+              </p>
+              <span class="text-[8px] font-black uppercase tracking-widest text-zinc-400 mt-1 block">
+                KARAKTERISTIK KUNCI
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clue Card 3 (200 Pts - Lime/Green Theme) -->
+        <div id="clueCard2" class="card-neo p-3 sm:p-3.5 transition-all duration-200 opacity-60">
+          <div class="flex items-start space-x-3.5">
+            <!-- Icon Badge -->
+            <div id="badgeClue2" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#10B981] text-white font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0">
+              <span class="text-[9px] uppercase leading-none font-bold">TINGKAT 3</span>
+              <span>200</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="font-display font-black text-xs sm:text-sm uppercase tracking-wide text-zinc-600" id="clueTitle2">
+                  Petunjuk 3 (Petunjuk Spesifik)
+                </h3>
+                <span id="clueStatusPill2" class="text-[9px] uppercase font-bold px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600 border border-zinc-300">
+                  🔒 TERKUNCI
+                </span>
+              </div>
+              <p id="clueText2" class="text-zinc-400 font-medium text-xs sm:text-sm mt-1 italic leading-snug">
+                🔒 Petunjuk 3 (200 Poin) masih dirahasiakan di anak tangga.
+              </p>
+              <span class="text-[8px] font-black uppercase tracking-widest text-zinc-400 mt-1 block">
+                KARYA / PERISTIWA
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clue Card 4 (100 Pts - Slate/Indigo Theme) -->
+        <div id="clueCard3" class="card-neo p-3 sm:p-3.5 transition-all duration-200 opacity-60">
+          <div class="flex items-start space-x-3.5">
+            <!-- Icon Badge -->
+            <div id="badgeClue3" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#6366F1] text-white font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0">
+              <span class="text-[9px] uppercase leading-none font-bold">TINGKAT 4</span>
+              <span>100</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="font-display font-black text-xs sm:text-sm uppercase tracking-wide text-zinc-600" id="clueTitle3">
+                  Petunjuk 4 (Jawaban Terbuka)
+                </h3>
+                <span id="clueStatusPill3" class="text-[9px] uppercase font-bold px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600 border border-zinc-300">
+                  🔒 TERKUNCI
+                </span>
+              </div>
+              <p id="clueText3" class="text-zinc-400 font-medium text-xs sm:text-sm mt-1 italic leading-snug">
+                🔒 Petunjuk 4 (100 Poin) masih dirahasiakan di anak tangga.
+              </p>
+              <span class="text-[8px] font-black uppercase tracking-widest text-zinc-400 mt-1 block">
+                KESEMPATAN TERAKHIR
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. PUBLIC ANSWER REVEAL CARD (Appears when solved or failed) -->
+    <section id="publicAnswerCard" class="hidden card-neo p-3.5 sm:p-4 text-center bg-gradient-to-b from-amber-50 to-white border-[2.5px] border-black">
+      <div class="inline-block sticker-badge text-[9px] sm:text-[10px] px-2.5 py-0.5 rounded-full bg-amber-400 text-zinc-950 mb-1">
+        ✦ KUNCI JAWABAN RESMI ✦
+      </div>
+      <h2 id="publicAnswerText" class="font-display font-black text-2xl sm:text-3xl text-zinc-900 tracking-wider uppercase mt-0.5">
+        RENDANG
+      </h2>
+      <p id="publicAnswerDesc" class="text-zinc-600 max-w-2xl mx-auto mt-1 text-xs sm:text-sm font-medium">
+        Masakan daging sapi rempah asli suku Minangkabau, Sumatera Barat.
+      </p>
+      <div id="roundOutcomePill" class="mt-2 inline-block font-display font-black text-xs px-3.5 py-1 rounded-xl uppercase border-2 border-black shadow-neo-sm">
+        Poin Berhasil Didapatkan!
+      </div>
+    </section>
+
+    <!-- 4. HOST SECRET PEEK DRAWER (Toggle with 'H') -->
+    <section id="hostSecretDrawer" class="hidden card-neo p-5 bg-amber-50 border-2 border-black">
+      <div class="flex items-center justify-between border-b-2 border-black pb-2.5 mb-3">
+        <div class="flex items-center space-x-2 text-amber-950 font-black text-xs uppercase tracking-wider">
+          <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span>PANDUAN RAHASIA HOST (HOST CHEAT-SHEET)</span>
+        </div>
+        <span class="text-xs text-amber-800 font-bold hidden sm:inline">Hanya untuk presenter (Tekan 'H' untuk sembunyikan)</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-3.5 rounded-2xl bg-white border-2 border-black shadow-neo-sm">
+          <span class="font-black text-zinc-500 uppercase tracking-wide">Jawaban yang Dicari:</span>
+          <div id="hostSecretAnswer" class="font-display font-black text-2xl text-zinc-900 mt-1">B.J. Habibie</div>
+          <span class="text-zinc-500 block mt-2 font-black uppercase tracking-wide">Variasi / Sinonim Diterima:</span>
+          <p id="hostSecretAliases" class="text-zinc-700 font-medium italic mt-0.5">Habibie, Bacharuddin Jusuf Habibie, Presiden ke-3 RI</p>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-amber-100/70 border-2 border-black shadow-neo-sm">
+          <span class="font-black text-amber-900 uppercase tracking-wide block mb-1">Catatan Panduan Host:</span>
+          <p id="hostSecretNotes" class="text-amber-950 leading-relaxed font-medium">
+            Berikan waktu diskusi 15 detik. Jika tim pertama salah tebak, langsung tekan 'Salah / Lockout' agar kontrol otomatis berpindah ke tim lawan dengan petunjuk tingkat 2!
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- DOCKED BOTTOM BROADCAST CONTROLS (Host Dashboard) -->
+  <footer class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md px-3 sm:px-6 py-2.5 border-t-2 border-black shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+      
+      <!-- Left: Benar Tim Merah -->
+      <button onclick="awardCorrect(0)" class="btn-neo flex-shrink-0 flex items-center space-x-2 px-3.5 sm:px-5 py-2.5 rounded-2xl bg-[#D81B60] hover:bg-[#D83A64] text-white font-black text-xs sm:text-sm tracking-wide">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        <span>BENAR TIM MERAH [1]</span>
+      </button>
+
+      <!-- Center: Action Controls -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2 flex-wrap justify-center">
+        <!-- Lockout / Wrong Button -->
+        <button onclick="recordWrong()" class="btn-neo flex items-center space-x-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-[#EF4444] hover:bg-[#DC2626] text-white font-black text-xs sm:text-sm tracking-wide" title="Salah / Kunci Tim Aktif & Buka Curi Poin (Key: X / Space)">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+          <span class="hidden xs:inline">SALAH /</span> <span>LOCKOUT [X]</span>
+        </button>
+
+        <!-- Manual Reveal Next Clue -->
+        <button onclick="revealNextClueManual()" class="btn-neo flex items-center space-x-1 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl bg-amber-100 hover:bg-amber-200 text-zinc-900 font-black text-xs sm:text-sm" title="Buka Clue Tingkat Berikutnya Secara Manual (Key: N)">
+          <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          <span>Clue [N]</span>
+        </button>
+
+        <!-- Reveal Final Answer -->
+        <button onclick="revealAnswerFinal()" class="btn-neo px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl bg-zinc-100 hover:bg-zinc-200 text-zinc-900 font-black text-xs sm:text-sm" title="Buka Jawaban Langsung">
+          Jawaban
+        </button>
+
+        <!-- Next Round Quick Action -->
+        <button onclick="nextRound()" class="btn-neo flex items-center space-x-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-black text-xs sm:text-sm" title="Mulai Babak Selanjutnya">
+          <span>BABAK BARU</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <!-- Right: Benar Tim Biru -->
+      <button onclick="awardCorrect(1)" class="btn-neo flex-shrink-0 flex items-center space-x-2 px-3.5 sm:px-5 py-2.5 rounded-2xl bg-[#0EA5E9] hover:bg-[#0284C7] text-white font-black text-xs sm:text-sm tracking-wide">
+        <span>BENAR TIM BIRU [2]</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+      </button>
+
+    </div>
+  </footer>
+
+  <!-- MODAL: KEYBOARD SHORTCUTS SHEET (?) -->
+  <div id="helpModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/60 backdrop-blur-sm p-4">
+    <div class="card-neo-lg max-w-lg w-full p-6 sm:p-7 relative">
+      <button onclick="closeHelpModal()" class="btn-neo-sm absolute top-4 right-4 p-1.5 rounded-xl bg-white text-zinc-700 hover:text-black">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-amber-300 border-2 border-black shadow-neo-sm text-zinc-950 flex items-center justify-center font-bold text-2xl">
+          ⌨️
+        </div>
+        <div>
+          <h3 class="font-display font-black text-xl text-zinc-900">Panduan Tombol Keyboard Host</h3>
+          <p class="text-xs text-zinc-500 font-semibold">Jalankan game show dengan cepat tanpa perlu mouse</p>
+        </div>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
+          <span class="text-zinc-800 font-bold">Benar untuk Tim Merah (Award Point)</span>
+          <div>
+            <kbd class="px-2 py-1 rounded bg-white text-rose-700 border-2 border-black shadow-neo-xs font-mono font-black">1</kbd> atau <kbd class="px-2 py-1 rounded bg-white text-rose-700 border-2 border-black shadow-neo-xs font-mono font-black">A</kbd>
+          </div>
+        </div>
+        <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
+          <span class="text-zinc-800 font-bold">Benar untuk Tim Biru (Award Point)</span>
+          <div>
+            <kbd class="px-2 py-1 rounded bg-white text-sky-700 border-2 border-black shadow-neo-xs font-mono font-black">2</kbd> atau <kbd class="px-2 py-1 rounded bg-white text-sky-700 border-2 border-black shadow-neo-xs font-mono font-black">B</kbd>
+          </div>
+        </div>
+        <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
+          <span class="text-zinc-800 font-bold">Salah / Lockout & Oper Curi Poin</span>
+          <div>
+            <kbd class="px-2 py-1 rounded bg-white text-red-700 border-2 border-black shadow-neo-xs font-mono font-black">X</kbd> atau <kbd class="px-2 py-1 rounded bg-white text-red-700 border-2 border-black shadow-neo-xs font-mono font-black">Space</kbd>
+          </div>
+        </div>
+        <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
+          <span class="text-zinc-800 font-bold">Mulai / Jeda Timer (15 Detik)</span>
+          <kbd class="px-2 py-1 rounded bg-amber-300 text-zinc-950 border-2 border-black shadow-neo-xs font-mono font-black">T</kbd>
+        </div>
+        <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
+          <span class="text-zinc-800 font-bold">Reset Timer ke 15s</span>
+          <kbd class="px-2 py-1 rounded bg-white text-zinc-900 border-2 border-black shadow-neo-xs font-mono font-black">R</kbd>
+        </div>
+        <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
+          <span class="text-zinc-800 font-bold">Buka Clue Tangga Berikutnya</span>
+          <kbd class="px-2 py-1 rounded bg-white text-zinc-900 border-2 border-black shadow-neo-xs font-mono font-black">N</kbd>
+        </div>
+        <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
+          <span class="text-zinc-800 font-bold">Kunci Jawaban Host (Cheat Sheet)</span>
+          <kbd class="px-2 py-1 rounded bg-amber-200 text-zinc-950 border-2 border-black shadow-neo-xs font-mono font-black">H</kbd>
+        </div>
+        <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
+          <span class="text-zinc-800 font-bold">Mode Layar Penuh (Fullscreen)</span>
+          <kbd class="px-2 py-1 rounded bg-white text-zinc-900 border-2 border-black shadow-neo-xs font-mono font-black">F</kbd>
+        </div>
+        <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
+          <span class="text-zinc-800 font-bold">Ganti Babak (Kiri / Kanan)</span>
+          <span class="font-mono text-zinc-900 font-black">← / →</span>
+        </div>
+      </div>
+
+      <div class="mt-5 text-center">
+        <button onclick="closeHelpModal()" class="btn-neo w-full py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black text-xs uppercase tracking-wider">
+          Mengerti & Lanjutkan Permainan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: QUESTION BANK MANAGER -->
+  <div id="questionModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/60 backdrop-blur-sm p-4">
+    <div class="card-neo-lg max-w-2xl w-full p-6 sm:p-7 relative max-h-[90vh] flex flex-col">
+      <button onclick="closeQuestionModal()" class="btn-neo-sm absolute top-4 right-4 p-1.5 rounded-xl bg-white text-zinc-700 hover:text-black">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-[#D81B60] text-white border-2 border-black shadow-neo-sm flex items-center justify-center font-display font-black text-xl">
+          📚
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h3 class="font-display font-black text-xl text-zinc-900">Manajemen Bank Soal Trivia</h3>
+            <span id="questionCountBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-zinc-100 border-2 border-black shadow-neo-xs font-black">
+              10 Babak
+            </span>
+          </div>
+          <p class="text-xs text-zinc-500 font-semibold">Lihat soal saat ini atau impor bank soal kustom (Format JSON)</p>
+        </div>
+      </div>
+
+      <!-- Tab Switchers -->
+      <div class="flex space-x-2 border-b-2 border-black pb-2 mb-4">
+        <button id="tabBtnList" onclick="switchQuestionTab('list')" class="btn-neo px-4 py-1.5 rounded-xl text-xs font-black bg-amber-300 text-zinc-950">
+          Daftar Soal Aktif
+        </button>
+        <button id="tabBtnImport" onclick="switchQuestionTab('import')" class="btn-neo px-4 py-1.5 rounded-xl text-xs font-black bg-white text-zinc-700 hover:text-zinc-950">
+          Impor / Ekspor JSON
+        </button>
+      </div>
+
+      <!-- Tab 1: Question List -->
+      <div id="tabQuestionList" class="flex-1 overflow-y-auto space-y-3 pr-2">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Tab 2: JSON Import / Export -->
+      <div id="tabQuestionImport" class="hidden flex-1 flex-col space-y-3">
+        <p class="text-xs text-zinc-600 font-medium">
+          Salin atau tempel daftar soal permainan di bawah ini. Anda bisa menyiapkan soal bertema khusus untuk acara kantor, ulang tahun, atau sekolah!
+        </p>
+        <textarea id="jsonQuestionArea" class="w-full flex-1 min-h-[220px] p-3 rounded-2xl bg-zinc-50 border-2 border-black text-xs font-mono text-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#D81B60]"></textarea>
+        <div class="flex justify-between items-center pt-2">
+          <button onclick="resetToDefaultQuestions()" class="btn-neo px-3 py-2 rounded-xl bg-rose-50 text-rose-700 text-xs font-black hover:bg-rose-100">
+            Kembali ke 10 Soal Bawaan
+          </button>
+          <div class="space-x-2">
+            <button onclick="copyQuestionJson()" class="btn-neo px-3 py-2 rounded-xl bg-white text-zinc-800 text-xs font-black">
+              Salin JSON
+            </button>
+            <button onclick="saveImportedJson()" class="btn-neo px-4 py-2 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-zinc-950 text-xs font-black">
+              Simpan & Terapkan Soal
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: WINNER CELEBRATION MODAL -->
+  <div id="winnerModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/70 backdrop-blur-md p-4">
+    <div class="card-neo-lg max-w-lg w-full p-8 text-center relative bg-gradient-to-b from-amber-50 to-white">
+      <div class="w-20 h-20 rounded-3xl bg-amber-300 border-2 border-black shadow-neo-md text-4xl flex items-center justify-center mx-auto mb-4 animate-bounce">
+        🏆
+      </div>
+      <span class="sticker-badge text-xs px-3 py-1 rounded-full bg-[#D81B60] text-white">
+        HASIL AKHIR PERTANDINGAN
+      </span>
+      <h2 id="winnerTitle" class="font-display font-black text-3xl sm:text-4xl text-zinc-900 mt-2 uppercase">
+        TIM MERAH MENANG!
+      </h2>
+      <p id="winnerSub" class="text-sm font-semibold text-zinc-600 mt-1 max-w-sm mx-auto">
+        Selamat atas kemenangan spektakuler di arena Tangga Curi Poin!
+      </p>
+
+      <!-- Score Comparison Cards -->
+      <div class="grid grid-cols-2 gap-4 my-6">
+        <div class="p-4 rounded-2xl bg-rose-50 border-2 border-black shadow-neo-sm">
+          <div class="text-xs font-black uppercase text-rose-600" id="winTeamName0">TIM MERAH</div>
+          <div class="font-display font-black text-4xl text-zinc-900 mt-1" id="finalScore0">0</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-sky-50 border-2 border-black shadow-neo-sm">
+          <div class="text-xs font-black uppercase text-sky-600" id="winTeamName1">TIM BIRU</div>
+          <div class="font-display font-black text-4xl text-zinc-900 mt-1" id="finalScore1">0</div>
+        </div>
+      </div>
+
+      <div class="flex space-x-3">
+        <button onclick="document.getElementById('winnerModal').classList.add('hidden')" class="btn-neo flex-1 py-3 rounded-2xl bg-white text-zinc-800 font-black text-xs uppercase tracking-wider">
+          Tutup
+        </button>
+        <button onclick="resetGameMatch()" class="btn-neo flex-1 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black text-xs uppercase tracking-wider">
+          Main Ulang Game
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+
+
+    /* =====================================================================
+       1. WEB AUDIO API SYNTHESIZER (AudioEngine)
+       ===================================================================== */
+    const AudioEngine = {
+      ctx: null,
+      isMuted: false,
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      toggleMute() {
+        this.isMuted = !this.isMuted;
+        const soundOn = document.getElementById('soundIconOn');
+        const soundOff = document.getElementById('soundIconOff');
+        if (soundOn && soundOff) {
+          soundOn.classList.toggle('hidden', this.isMuted);
+          soundOff.classList.toggle('hidden', !this.isMuted);
+        }
+        return this.isMuted;
+      },
+      playTone(freq, type, duration, startTime = 0, gainLevel = 0.15) {
+        if (this.isMuted) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + startTime);
+          gain.gain.setValueAtTime(gainLevel, this.ctx.currentTime + startTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + startTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + startTime);
+          osc.stop(this.ctx.currentTime + startTime + duration);
+        } catch(e) {}
+      },
+      playCorrect() {
+        if (this.isMuted) return;
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((n, i) => {
+          this.playTone(n, 'triangle', 0.28, i * 0.08, 0.2);
+        });
+      },
+      playWrong() {
+        if (this.isMuted) return;
+        this.init();
+        this.playTone(150, 'sawtooth', 0.35, 0, 0.22);
+        this.playTone(142, 'sawtooth', 0.35, 0.04, 0.22);
+      },
+      playReveal() {
+        if (this.isMuted) return;
+        this.init();
+        const notes = [440, 554.37, 659.25, 880];
+        notes.forEach((n, i) => {
+          this.playTone(n, 'sine', 0.3, i * 0.07, 0.18);
+        });
+      },
+      playTick() {
+        if (this.isMuted) return;
+        this.playTone(800, 'sine', 0.04, 0, 0.08);
+      },
+      playUrgentTick() {
+        if (this.isMuted) return;
+        this.playTone(1100, 'square', 0.06, 0, 0.12);
+      },
+      playFanfare() {
+        if (this.isMuted) return;
+        this.init();
+        const melody = [
+          { f: 523.25, d: 0.15, t: 0 },
+          { f: 523.25, d: 0.15, t: 0.15 },
+          { f: 523.25, d: 0.15, t: 0.3 },
+          { f: 659.25, d: 0.4,  t: 0.45 },
+          { f: 523.25, d: 0.2,  t: 0.9 },
+          { f: 783.99, d: 0.6,  t: 1.1 }
+        ];
+        melody.forEach(m => {
+          this.playTone(m.f, 'triangle', m.d, m.t, 0.22);
+        });
+      }
+    };
+
+    function toggleMute() {
+      AudioEngine.toggleMute();
+    }
+
+const DEFAULT_ROUNDS = [
+      {
+        id: 1,
+        category: "TOKOH NASIONAL & SAINS",
+        answer: "B.J. Habibie",
+        aliases: "Habibie, Bacharuddin Jusuf Habibie, Presiden ke-3 RI",
+        description: "Bapak Teknologi Indonesia, penemu Crack Theory aeronautika, dan Presiden ke-3 Republik Indonesia.",
+        notes: "Sebutkan nama panggilan 'Habibie' atau nama lengkap sudah sah.",
+        clues: [
+          { level: 1, points: 400, text: "Teknokrat pemegang 46 hak paten aeronautika & perumus 'Crack Theory'" },
+          { level: 2, points: 300, text: "Menjabat sebagai Menristek selama 2 dekade sebelum memimpin negara" },
+          { level: 3, points: 200, text: "Presiden ke-3 RI yang memprakarsai lahirnya pesawat N-250 Gatotkaca" },
+          { level: 4, points: 100, text: "Sosok cendekiawan jenius yang kisah cintanya dengan sang istri Ainun diabadikan dalam film laris" }
+        ]
+      },
+      {
+        id: 2,
+        category: "KULINER NUSANTARA",
+        answer: "Rendang",
+        aliases: "Randang Minangkabau, Rendang Daging Sapi",
+        description: "Olahan daging sapi rempah khas Minangkabau Sumatera Barat yang dimasak berjam-jam hingga hitam pekat.",
+        notes: "Jawaban 'Rendang' atau 'Randang' mutlak benar.",
+        clues: [
+          { level: 1, points: 400, text: "Menggunakan teknik 'Marandang' dengan suhu api terkontrol selama minimal 4-8 jam" },
+          { level: 2, points: 300, text: "Mengandung zat antimikroba alami dari rempah sehingga tahan berminggu-minggu tanpa kulkas" },
+          { level: 3, points: 200, text: "Berkali-kali dinobatkan oleh CNN Travel sebagai World's 50 Most Delicious Foods" },
+          { level: 4, points: 100, text: "Olahan daging sapi khas Minangkabau Sumatera Barat kaya santan pekat kehitaman" }
+        ]
+      },
+      {
+        id: 3,
+        category: "GEOGRAFI & WISATA",
+        answer: "Danau Toba",
+        aliases: "Toba Lake, Danau Toba Sumatera Utara",
+        description: "Danau vulkanik kaldera terbesar di dunia dengan Pulau Samosir di tengahnya.",
+        notes: "Danau Toba. Cukup sebut 'Toba' sudah sah.",
+        clues: [
+          { level: 1, points: 400, text: "Terbentuk dari letusan supervulkanik dahsyat sekitar 74.000 tahun lalu yang mengubah iklim bumi" },
+          { level: 2, points: 300, text: "Memiliki kedalaman hingga 505 meter dan berstatus UNESCO Global Geopark" },
+          { level: 3, points: 200, text: "Danau vulkanik kaldera terbesar di dunia dan danau terbesar di Asia Tenggara" },
+          { level: 4, points: 100, text: "Danau di Sumatera Utara yang memiliki pulau besar bernama Pulau Samosir tepat di tengahnya" }
+        ]
+      },
+      {
+        id: 4,
+        category: "POP CULTURE & KOMEDI",
+        answer: "Warkop DKI",
+        aliases: "Warkop Prambors, Dono Kasino Indro, Warkop",
+        description: "Grup komedi legendaris Indonesia beranggotakan Wahjoe Sardono, Kasino Hadiwibowo, dan Indrodjojo Kusumonegoro.",
+        notes: "Bisa sebut 'Warkop' atau 'Warkop DKI'.",
+        clues: [
+          { level: 1, points: 400, text: "Bermula dari siaran radio komedi legendaris di Radio Prambors Jakarta era 1970-an" },
+          { level: 2, points: 300, text: "Memiliki semboyan abadi 'Tertawalah sebelum tertawa itu dilarang'" },
+          { level: 3, points: 200, text: "Grup komedi terlaris perfilman nasional dengan judul seperti CHIPS, Gengsi Dong, & Maju Kena Mundur Kena" },
+          { level: 4, points: 100, text: "Trio komedian legendaris beranggotakan Wahjoe Sardono (Dono), Kasino Hadiwibowo, dan Indrodjojo Kusumonegoro" }
+        ]
+      },
+      {
+        id: 5,
+        category: "FAUNA ENDEMIK INDONESIA",
+        answer: "Komodo",
+        aliases: "Varanus komodoensis, Komodo Dragon, Biawak Komodo, Ora",
+        description: "Kadal terbesar dan terberat di dunia yang hidup secara liar di kawasan Taman Nasional Komodo NTT.",
+        notes: "Komodo, Komodo Dragon, atau Ora diterima.",
+        clues: [
+          { level: 1, points: 400, text: "Memiliki organ Jacobson di langit-langit mulut untuk mencium mangsa hingga jarak 9,5 km" },
+          { level: 2, points: 300, text: "Memiliki kelenjar racun (venom) kompleks yang menurunkan tekanan darah dan mencegah pembekuan darah mangsa" },
+          { level: 3, points: 200, text: "Hewan purba spesies kadal terbesar dan terberat di dunia yang masih hidup" },
+          { level: 4, points: 100, text: "Satwa endemik Indonesia yang dilindungi di Taman Nasional Komodo, Nusa Tenggara Timur" }
+        ]
+      },
+      {
+        id: 6,
+        category: "SEJARAH & LANDMARK",
+        answer: "Candi Borobudur",
+        aliases: "Borobudur Temple, Borobudur Magelang",
+        description: "Monumen dan candi Buddha terbesar di dunia yang dibangun Dinasti Syailendra di Magelang, Jawa Tengah.",
+        notes: "Candi Borobudur.",
+        clues: [
+          { level: 1, points: 400, text: "Dibangun sekitar tahun 800 Masehi pada masa kejayaan Dinasti Syailendra" },
+          { level: 2, points: 300, text: "Memiliki 2.672 panel relief dan 504 arca, termasuk relief Karmawibhangga di kaki candi" },
+          { level: 3, points: 200, text: "Sempat terkubur abu vulkanik Gunung Merapi dan semak belukar sebelum dipugar kembali di era Raffles" },
+          { level: 4, points: 100, text: "Candi Buddha terbesar di dunia yang terletak di Magelang, Jawa Tengah" }
+        ]
+      },
+      {
+        id: 7,
+        category: "SENI & ALAT MUSIK",
+        answer: "Angklung",
+        aliases: "Alat musik Angklung Sunda, Angklung Jawa Barat",
+        description: "Instrumen musik bambu bernada ganda khas masyarakat Sunda, diakui UNESCO.",
+        notes: "Angklung.",
+        clues: [
+          { level: 1, points: 400, text: "Terdaftar resmi sebagai Karya Agung Warisan Budaya Lisan dan Nonbendawi Manusia oleh UNESCO sejak November 2010" },
+          { level: 2, points: 300, text: "Daeng Soetigna mengubah laras nadanya dari pentatonis tradisional menjadi diatonis modern pada tahun 1938" },
+          { level: 3, points: 200, text: "Dimainkan dengan cara digoyangkan (dibergetar) agar tabung bambu saling beradu menghasilkan nada" },
+          { level: 4, points: 100, text: "Alat musik tradisional khas masyarakat Sunda Jawa Barat yang sering dipentaskan di Saung Mang Udjo" }
+        ]
+      },
+      {
+        id: 8,
+        category: "BRAND & IKONIK",
+        answer: "Indomie",
+        aliases: "Indomie Mi Goreng, PT Indofood CBP Sukses Makmur",
+        description: "Merek mi instan nomor satu di Indonesia produksi Indofood yang memiliki slogan abadi 'Seleraku'.",
+        notes: "Indomie.",
+        clues: [
+          { level: 1, points: 400, text: "Pertama kali diluncurkan pada tahun 1972 dengan varian rasa Kaldu Ayam oleh Sanmaru Food Manufacturing" },
+          { level: 2, points: 300, text: "Menjadi komoditas makanan instan paling populer di Nigeria dan diekspor ke lebih dari 100 negara" },
+          { level: 3, points: 200, text: "Varian rasa 'Mi Goreng' yang dirilis tahun 1982 menjadi varian paling legendaris dan mendunia" },
+          { level: 4, points: 100, text: "Merek mi instan nomor satu di Indonesia produksi Indofood yang menjadi makanan favorit anak kos" }
+        ]
+      },
+      {
+        id: 9,
+        category: "OLAHRAGA & PRESTASI",
+        answer: "Susi Susanti",
+        aliases: "Susy Susanti, Lucia Francisca Susi Susanti",
+        description: "Legenda bulu tangkis tunggal putri Indonesia, peraih medali emas pertama RI di Olimpiade Barcelona 1992.",
+        notes: "Susi Susanti atau Susy Susanti sah.",
+        clues: [
+          { level: 1, points: 400, text: "Masuk dalam daftar Badminton Hall of Fame BWF pada tahun 2004 berkat gaya bermain ulet dan split legendarisnya" },
+          { level: 2, points: 300, text: "Membentuk julukan 'Pasangan Emas Olimpiade' setelah menikah dengan sesama pebulu tangkis Alan Budikusuma" },
+          { level: 3, points: 200, text: "Menorehkan sejarah di Olimpiade Barcelona 1992 di nomor tunggal putri" },
+          { level: 4, points: 100, text: "Atlet pertama yang berhasil mempersembahkan medali emas Olimpiade pertama bagi Republik Indonesia" }
+        ]
+      },
+      {
+        id: 10,
+        category: "PAHLAWAN NASIONAL",
+        answer: "R.A. Kartini",
+        aliases: "Raden Adjeng Kartini, Raden Ayu Kartini, Ibu Kartini",
+        description: "Tokoh pelopor emansipasi wanita Indonesia, pejuang kesetaraan pendidikan kaum pribumi, dan penulis surat 'Door Duisternis tot Licht'.",
+        notes: "R.A. Kartini atau Raden Adjeng Kartini sah.",
+        clues: [
+          { level: 1, points: 400, text: "Kumpulan surat korespondensinya kepada sahabat penanya J.H. Abendanon dibukukan dengan judul 'Door Duisternis tot Licht'" },
+          { level: 2, points: 300, text: "Menerima beasiswa dari pemerintah Hindia Belanda namun merelakannya untuk rekannya Agus Salim" },
+          { level: 3, points: 200, text: "Mendirikan sekolah pertama untuk kaum perempuan pribumi di Rembang dan Jepara" },
+          { level: 4, points: 100, text: "Tokoh pelopor emansipasi wanita Indonesia yang hari kelahirannya diperingati setiap 21 April" }
+        ]
+      }
+    ];
+
+    /* =====================================================================
+       3. GAME STATE MANAGEMENT
+       ===================================================================== */
+    let gameRounds = JSON.parse(JSON.stringify(DEFAULT_ROUNDS));
+
+    let gameState = {
+      roundIndex: 0,
+      activeTeam: 0,        // 0: Tim Merah, 1: Tim Biru
+      startingTeam: 0,      // Alternates each round
+      currentClueStep: 0,   // 0 (400), 1 (300), 2 (200), 3 (100)
+      clueRevealed: [true, false, false, false],
+      status: 'PLAYING',    // 'PLAYING' | 'SOLVED' | 'FAILED'
+      roundStatuses: Array(DEFAULT_ROUNDS.length).fill('Belum'), // 'Belum' | 'Sedang Main' | 'Selesai'
+      teams: [
+        { name: 'TIM MERAH', score: 0, locked: false },
+        { name: 'TIM BIRU', score: 0, locked: false }
+      ],
+      timer: {
+        seconds: 15,
+        defaultSeconds: 15,
+        running: false,
+        intervalId: null
+      },
+      hostPeekVisible: false
+    };
+
+    gameState.roundStatuses[0] = 'Sedang Main';
+
+    
+const CLUE_POINTS = [400, 300, 200, 100];
+
+    /* =====================================================================
+       4. INITIALIZATION & RENDERING
+       ===================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      // Load saved state or questions if existing in localStorage (v2 to guarantee 10 rounds)
+      const savedData = localStorage.getItem('tangga_curi_poin_questions_v2');
+      if (savedData) {
+        try {
+          const parsed = JSON.parse(savedData);
+          if (Array.isArray(parsed) && parsed.length === 10) {
+            gameRounds = parsed;
+          }
+        } catch(e) {
+          console.error("Failed loading cached questions", e);
+        }
+      } else {
+        saveQuestionsToStorage();
+      }
+
+      renderRound();
+      setupKeyboardListeners();
+      initConfetti();
+    });
+
+    function renderRound() {
+      const curRound = gameRounds[gameState.roundIndex];
+      if (!curRound) return;
+
+      // 1. Navigation & Headers
+      document.getElementById('roundIndicator').textContent = `Babak ${gameState.roundIndex + 1} dari ${gameRounds.length}`;
+      document.getElementById('currentCategoryText').textContent = curRound.category;
+
+      // Update Round Status Tag (Belum / Sedang Main / Selesai)
+      const curStatus = gameState.roundStatuses[gameState.roundIndex] || 'Belum';
+      const statusTagEl = document.getElementById('roundStatusTag');
+      if (statusTagEl) {
+        statusTagEl.textContent = curStatus;
+        if (curStatus === 'Selesai') {
+          statusTagEl.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-200 text-purple-950 border-2 border-black shadow-neo-xs";
+        } else if (curStatus === 'Sedang Main') {
+          statusTagEl.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-200 text-amber-950 border-2 border-black shadow-neo-xs";
+        } else {
+          statusTagEl.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 border border-zinc-300";
+        }
+      }
+
+      // 2. Scoreboard updates
+      document.getElementById('teamName0').value = gameState.teams[0].name;
+      document.getElementById('teamName1').value = gameState.teams[1].name;
+      document.getElementById('scoreTeam0').textContent = gameState.teams[0].score;
+      document.getElementById('scoreTeam1').textContent = gameState.teams[1].score;
+
+      // Turn indicators & Lockouts
+      const isRedTurn = gameState.activeTeam === 0 && gameState.status === 'PLAYING';
+      const isBlueTurn = gameState.activeTeam === 1 && gameState.status === 'PLAYING';
+
+      document.getElementById('turnBadge0').classList.toggle('hidden', !isRedTurn);
+      document.getElementById('turnBadge1').classList.toggle('hidden', !isBlueTurn);
+
+      // Visual active glow card border (Neo-pop styling)
+      const cardMerah = document.getElementById('cardTeamMerah');
+      const cardBiru = document.getElementById('cardTeamBiru');
+
+      if (isRedTurn) {
+        cardMerah.classList.add('ring-4', 'ring-rose-300', 'border-[#D81B60]');
+        cardMerah.style.boxShadow = '6px 6px 0px #D81B60';
+      } else {
+        cardMerah.classList.remove('ring-4', 'ring-rose-300', 'border-[#D81B60]');
+        cardMerah.style.boxShadow = '4px 4px 0px #18181B';
+      }
+
+      if (isBlueTurn) {
+        cardBiru.classList.add('ring-4', 'ring-sky-300', 'border-[#0EA5E9]');
+        cardBiru.style.boxShadow = '6px 6px 0px #0EA5E9';
+      } else {
+        cardBiru.classList.remove('ring-4', 'ring-sky-300', 'border-[#0EA5E9]');
+        cardBiru.style.boxShadow = '4px 4px 0px #18181B';
+      }
+
+      document.getElementById('lockoutBadge0').classList.toggle('hidden', !gameState.teams[0].locked);
+      document.getElementById('lockoutBadge1').classList.toggle('hidden', !gameState.teams[1].locked);
+
+      // Status Callout message
+      const statusEl = document.getElementById('statusCallout');
+      if (gameState.status === 'SOLVED') {
+        const winner = gameState.teams[gameState.activeTeam].name;
+        statusEl.innerHTML = `🏆 <span class="text-emerald-700 font-black">${winner} BERHASIL MENJAWAB!</span>`;
+      } else if (gameState.status === 'FAILED') {
+        statusEl.innerHTML = `❌ <span class="text-rose-600 font-black">KEDUA TIM GAGAL / WAKTU HABIS</span>`;
+      } else {
+        const activeName = gameState.teams[gameState.activeTeam].name;
+        const pts = CLUE_POINTS[gameState.currentClueStep];
+        const isSteal = gameState.teams[1 - gameState.activeTeam].locked;
+        if (isSteal) {
+          statusEl.innerHTML = `🚨 <span class="text-amber-600 font-black">CURI POIN!</span> Giliran: <span class="${gameState.activeTeam === 0 ? 'text-[#D81B60]' : 'text-[#0EA5E9]'} font-black">${activeName} (${pts} Pts)</span>`;
+        } else {
+          statusEl.innerHTML = `Giliran Menjawab: <span class="${gameState.activeTeam === 0 ? 'text-[#D81B60]' : 'text-[#0EA5E9]'} font-black">${activeName} (${pts} Pts)</span>`;
+        }
+      }
+
+      // 3. Current active point badge
+      const activePts = CLUE_POINTS[gameState.currentClueStep];
+      document.getElementById('currentPointsBadge').textContent = `${activePts} POIN`;
+
+      // 4. Clue Cards rendering (Inspired by Dribbble "Kind of Quizzes" cards)
+      const clueThemes = [
+        { bg: 'bg-[#D81B60]', text: 'text-white', titleColor: 'text-[#D81B60]' },
+        { bg: 'bg-[#F59E0B]', text: 'text-zinc-950', titleColor: 'text-amber-700' },
+        { bg: 'bg-[#10B981]', text: 'text-white', titleColor: 'text-emerald-700' },
+        { bg: 'bg-[#6366F1]', text: 'text-white', titleColor: 'text-indigo-700' }
+      ];
+
+      curRound.clues.forEach((clueItem, idx) => {
+        const isRevealed = gameState.clueRevealed[idx];
+        const isCurrentActiveStep = gameState.currentClueStep === idx && gameState.status === 'PLAYING';
+        
+        const cardEl = document.getElementById(`clueCard${idx}`);
+        const textEl = document.getElementById(`clueText${idx}`);
+        const statusPill = document.getElementById(`clueStatusPill${idx}`);
+        const badgeEl = document.getElementById(`badgeClue${idx}`);
+        const theme = clueThemes[idx];
+
+        if (isRevealed) {
+          cardEl.classList.remove('opacity-60', 'bg-zinc-50');
+          cardEl.classList.add('bg-white');
+          textEl.classList.remove('italic', 'text-zinc-400');
+          textEl.classList.add('text-zinc-900', 'font-bold');
+          textEl.textContent = clueItem.text;
+
+          statusPill.textContent = "✦ DIBUKA";
+          statusPill.className = "text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border-2 border-black shadow-neo-xs";
+
+          badgeEl.className = `w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${theme.bg} ${theme.text} font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0`;
+        } else {
+          cardEl.classList.add('opacity-60', 'bg-zinc-50');
+          cardEl.classList.remove('bg-white');
+          textEl.classList.add('italic', 'text-zinc-400');
+          textEl.classList.remove('text-zinc-900', 'font-bold');
+          textEl.textContent = `🔒 Petunjuk ${idx + 1} (${CLUE_POINTS[idx]} Poin) masih dirahasiakan di anak tangga.`;
+
+          statusPill.textContent = "🔒 TERKUNCI";
+          statusPill.className = "text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600 border border-zinc-300";
+
+          badgeEl.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-zinc-200 text-zinc-400 font-display font-black text-base flex flex-col items-center justify-center border-2 border-zinc-300 flex-shrink-0";
+        }
+
+        // Highlight active clue card
+        if (isCurrentActiveStep) {
+          cardEl.classList.add('ring-4', 'ring-amber-300');
+          cardEl.style.boxShadow = '6px 6px 0px #18181B';
+        } else {
+          cardEl.classList.remove('ring-4', 'ring-amber-300');
+          cardEl.style.boxShadow = isRevealed ? '4px 4px 0px #18181B' : '2px 2px 0px #18181B';
+        }
+      });
+
+      // 5. Public Answer Reveal Banner
+      const pubCard = document.getElementById('publicAnswerCard');
+      if (gameState.status === 'SOLVED' || gameState.status === 'FAILED') {
+        pubCard.classList.remove('hidden');
+        document.getElementById('publicAnswerText').textContent = curRound.answer;
+        document.getElementById('publicAnswerDesc').textContent = curRound.description || "";
+        const pill = document.getElementById('roundOutcomePill');
+        if (gameState.status === 'SOLVED') {
+          pill.className = "mt-2 inline-block font-display font-black text-xs px-3.5 py-1 rounded-xl uppercase bg-emerald-100 text-emerald-950 border-2 border-black shadow-neo-sm";
+          pill.textContent = `✅ POIN DIRAIH OLEH ${gameState.teams[gameState.activeTeam].name} (+${CLUE_POINTS[gameState.currentClueStep]} POIN)`;
+        } else {
+          pill.className = "mt-2 inline-block font-display font-black text-xs px-3.5 py-1 rounded-xl uppercase bg-rose-100 text-rose-950 border-2 border-black shadow-neo-sm";
+          pill.textContent = "❌ TIDAK ADA POIN DIHASILKAN PADA BABAK INI";
+        }
+        requestAnimationFrame(() => {
+          pubCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+      } else {
+        pubCard.classList.add('hidden');
+      }
+
+      // 6. Host Cheat-Sheet Area
+      document.getElementById('hostSecretAnswer').textContent = curRound.answer;
+      document.getElementById('hostSecretAliases').textContent = curRound.aliases || curRound.answer;
+      document.getElementById('hostSecretNotes').textContent = curRound.notes || "Pastikan jawaban mendekati alias resmi.";
+    }
+
+    function awardCorrect(teamIndex) {
+      if (gameState.status !== 'PLAYING') return;
+
+      AudioEngine.playCorrect();
+      const pointsWon = CLUE_POINTS[gameState.currentClueStep];
+      gameState.teams[teamIndex].score += pointsWon;
+      gameState.activeTeam = teamIndex;
+      gameState.status = 'SOLVED';
+      gameState.roundStatuses[gameState.roundIndex] = 'Selesai';
+
+      // Reveal all clues for fun and reading
+      gameState.clueRevealed = [true, true, true, true];
+
+      // Stop timer
+      pauseTimer();
+
+      // Confetti burst
+      triggerConfetti();
+
+      renderRound();
+    }
+
+    // Triggered when current team is WRONG or PASSES
+    function recordWrong() {
+      if (gameState.status !== 'PLAYING') return;
+
+      AudioEngine.playWrong();
+      const currentTeam = gameState.activeTeam;
+      const opposingTeam = 1 - currentTeam;
+
+      // Lockout current team
+      gameState.teams[currentTeam].locked = true;
+
+      // If opposing team is already locked out, everyone failed!
+      if (gameState.teams[opposingTeam].locked) {
+        gameState.status = 'FAILED';
+        gameState.roundStatuses[gameState.roundIndex] = 'Selesai';
+        gameState.clueRevealed = [true, true, true, true];
+        pauseTimer();
+        renderRound();
+        return;
+      }
+
+      // If opponent can STEAL:
+      // Transfer control to opposing team
+      gameState.activeTeam = opposingTeam;
+
+      // Reveal the next clue level if available
+      if (gameState.currentClueStep < 3) {
+        gameState.currentClueStep += 1;
+        gameState.clueRevealed[gameState.currentClueStep] = true;
+        AudioEngine.playReveal();
+      }
+
+      // Reset timer to 15s for the stealing team and auto-start
+      resetTimer();
+      startTimer();
+
+      renderRound();
+    }
+
+    // Manual Clue Progression
+    function revealNextClueManual() {
+      if (gameState.currentClueStep < 3) {
+        gameState.currentClueStep += 1;
+        gameState.clueRevealed[gameState.currentClueStep] = true;
+        AudioEngine.playReveal();
+        renderRound();
+      }
+    }
+
+    function revealAnswerFinal() {
+      gameState.status = 'FAILED';
+      gameState.roundStatuses[gameState.roundIndex] = 'Selesai';
+      gameState.clueRevealed = [true, true, true, true];
+      pauseTimer();
+      renderRound();
+    }
+
+    function nextRound() {
+      if (gameState.roundIndex < gameRounds.length - 1) {
+        gameState.roundIndex += 1;
+      } else {
+        // Grand finale announcement
+        showWinnerAnnouncement();
+        return;
+      }
+
+      setupNewRoundState();
+      renderRound();
+    }
+
+    function prevRound() {
+      if (gameState.roundIndex > 0) {
+        gameState.roundIndex -= 1;
+        setupNewRoundState();
+        renderRound();
+      }
+    }
+
+    function setupNewRoundState() {
+      // Alternate starting team
+      gameState.startingTeam = 1 - gameState.startingTeam;
+      gameState.activeTeam = gameState.startingTeam;
+      gameState.currentClueStep = 0;
+      gameState.clueRevealed = [true, false, false, false];
+      gameState.status = 'PLAYING';
+      gameState.teams[0].locked = false;
+      gameState.teams[1].locked = false;
+      if (gameState.roundStatuses[gameState.roundIndex] !== 'Selesai') {
+        gameState.roundStatuses[gameState.roundIndex] = 'Sedang Main';
+      }
+      resetTimer();
+    }
+
+    function adjustScore(teamIdx, delta) {
+      gameState.teams[teamIdx].score = Math.max(0, gameState.teams[teamIdx].score + delta);
+      renderRound();
+    }
+
+    function updateTeamName(teamIdx, newName) {
+      gameState.teams[teamIdx].name = newName.toUpperCase() || (teamIdx === 0 ? "TIM MERAH" : "TIM BIRU");
+      renderRound();
+    }
+
+    /* =====================================================================
+       6. 15-SECOND COUNTDOWN TIMER
+       ===================================================================== */
+    function toggleTimer() {
+      if (gameState.timer.running) {
+        pauseTimer();
+      } else {
+        startTimer();
+      }
+    }
+
+    function startTimer() {
+      AudioEngine.init();
+      if (gameState.timer.running) return;
+
+      gameState.timer.running = true;
+      updateTimerButtonUI();
+
+      gameState.timer.intervalId = setInterval(() => {
+        if (gameState.timer.seconds > 0) {
+          gameState.timer.seconds--;
+          updateTimerDisplay();
+
+          if (gameState.timer.seconds <= 4 && gameState.timer.seconds > 0) {
+            AudioEngine.playUrgentTick();
+          } else {
+            AudioEngine.playTick();
+          }
+
+          if (gameState.timer.seconds === 0) {
+            pauseTimer();
+            AudioEngine.playWrong();
+            // Automatically treat as a wrong/lockout if time runs out
+            recordWrong();
+          }
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      gameState.timer.running = false;
+      clearInterval(gameState.timer.intervalId);
+      gameState.timer.intervalId = null;
+      updateTimerButtonUI();
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      gameState.timer.seconds = gameState.timer.defaultSeconds;
+      updateTimerDisplay();
+    }
+
+    function addTimerSeconds(extra) {
+      gameState.timer.seconds += extra;
+      updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+      const sec = gameState.timer.seconds;
+      const textEl = document.getElementById('timerText');
+      textEl.textContent = sec;
+
+      const circle = document.getElementById('timerProgressCircle');
+      const maxSec = gameState.timer.defaultSeconds;
+      const totalCircumference = 301.59;
+      const offset = totalCircumference - (sec / maxSec) * totalCircumference;
+      circle.style.strokeDashoffset = Math.max(0, offset);
+
+      if (sec <= 4) {
+        circle.setAttribute('stroke', '#ef233c');
+        textEl.classList.add('text-red-500', 'animate-pulse');
+      } else {
+        circle.setAttribute('stroke', '#f59e0b');
+        textEl.classList.remove('text-red-500', 'animate-pulse');
+      }
+    }
+
+    function updateTimerButtonUI() {
+      const playIcon = document.getElementById('timerPlayIcon');
+      const pauseIcon = document.getElementById('timerPauseIcon');
+      const label = document.getElementById('timerBtnLabel');
+
+      if (gameState.timer.running) {
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+        label.textContent = "JEDA (T)";
+      } else {
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+        label.textContent = "MULAI (T)";
+      }
+    }
+
+    /* =====================================================================
+       7. HOST TOOLS & SHORTCUTS MODAL
+       ===================================================================== */
+    function toggleHostPeek() {
+      gameState.hostPeekVisible = !gameState.hostPeekVisible;
+      const drawer = document.getElementById('hostSecretDrawer');
+      drawer.classList.toggle('hidden', !gameState.hostPeekVisible);
+      document.getElementById('hostPeekBtn').classList.toggle('bg-amber-500/30', gameState.hostPeekVisible);
+    }
+
+    function setupKeyboardListeners() {
+      window.addEventListener('keydown', (e) => {
+        // Ignore if user typing in input/textarea
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+          return;
+        }
+
+        const key = e.key.toUpperCase();
+
+        if (key === '1' || key === 'A') {
+          e.preventDefault();
+          awardCorrect(0);
+        } else if (key === '2' || key === 'B') {
+          e.preventDefault();
+          awardCorrect(1);
+        } else if (key === 'X' || key === ' ') {
+          e.preventDefault();
+          recordWrong();
+        } else if (key === 'T') {
+          e.preventDefault();
+          toggleTimer();
+        } else if (key === 'R') {
+          e.preventDefault();
+          resetTimer();
+        } else if (key === 'N') {
+          e.preventDefault();
+          revealNextClueManual();
+        } else if (key === 'H') {
+          e.preventDefault();
+          toggleHostPeek();
+        } else if (key === 'F') {
+          e.preventDefault();
+          toggleFullscreen();
+        } else if (key === 'ARROWLEFT') {
+          e.preventDefault();
+          prevRound();
+        } else if (key === 'ARROWRIGHT') {
+          e.preventDefault();
+          nextRound();
+        } else if (key === '?' || key === '/') {
+          e.preventDefault();
+          openHelpModal();
+        }
+      });
+    }
+
+    function openHelpModal() {
+      document.getElementById('helpModal').classList.remove('hidden');
+    }
+    function closeHelpModal() {
+      document.getElementById('helpModal').classList.add('hidden');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    }
+
+    /* =====================================================================
+       8. QUESTION MANAGER (CRUD & JSON Import/Export)
+       ===================================================================== */
+    function openQuestionModal() {
+      document.getElementById('questionModal').classList.remove('hidden');
+      renderQuestionList();
+      document.getElementById('jsonQuestionArea').value = JSON.stringify(gameRounds, null, 2);
+    }
+
+    function closeQuestionModal() {
+      document.getElementById('questionModal').classList.add('hidden');
+    }
+
+    function switchQuestionTab(tab) {
+      const isList = tab === 'list';
+      document.getElementById('tabQuestionList').classList.toggle('hidden', !isList);
+      document.getElementById('tabQuestionImport').classList.toggle('hidden', isList);
+
+      document.getElementById('tabBtnList').classList.toggle('bg-amber-500/20', isList);
+      document.getElementById('tabBtnList').classList.toggle('text-amber-300', isList);
+      document.getElementById('tabBtnImport').classList.toggle('bg-amber-500/20', !isList);
+      document.getElementById('tabBtnImport').classList.toggle('text-amber-300', !isList);
+    }
+
+    function renderQuestionList() {
+      const listEl = document.getElementById('tabQuestionList');
+      document.getElementById('questionCountBadge').textContent = gameRounds.length;
+      listEl.innerHTML = '';
+
+      gameRounds.forEach((rnd, idx) => {
+        const item = document.createElement('div');
+        item.className = "p-3 rounded-xl bg-tv-panel border border-tv-border flex items-center justify-between";
+        item.innerHTML = `
+          <div>
+            <span class="text-[10px] font-bold uppercase text-amber-400">Babak ${idx + 1} • ${rnd.category}</span>
+            <h4 class="font-display font-bold text-sm text-white">${rnd.answer}</h4>
+            <p class="text-xs text-slate-400 truncate max-w-sm">${rnd.clues[0]?.text || ''}</p>
+          </div>
+          <div class="flex items-center space-x-1">
+            <button onclick="deleteQuestion(${idx})" class="p-1.5 rounded-lg text-rose-400 hover:bg-rose-950/60 transition" title="Hapus Babak">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    function deleteQuestion(idx) {
+      if (gameRounds.length <= 1) return;
+      gameRounds.splice(idx, 1);
+      if (gameState.roundIndex >= gameRounds.length) {
+        gameState.roundIndex = gameRounds.length - 1;
+      }
+      saveQuestionsToStorage();
+      renderQuestionList();
+      renderRound();
+    }
+
+    function resetToDefaultQuestions() {
+      gameRounds = JSON.parse(JSON.stringify(DEFAULT_ROUNDS));
+      gameState.roundIndex = 0;
+      saveQuestionsToStorage();
+      renderQuestionList();
+      renderRound();
+      document.getElementById('jsonQuestionArea').value = JSON.stringify(gameRounds, null, 2);
+    }
+
+    function copyQuestionJson() {
+      const area = document.getElementById('jsonQuestionArea');
+      area.select();
+      document.execCommand('copy');
+    }
+
+    function saveImportedJson() {
+      const area = document.getElementById('jsonQuestionArea');
+      try {
+        const parsed = JSON.parse(area.value);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].clues) {
+          gameRounds = parsed;
+          gameState.roundIndex = 0;
+          saveQuestionsToStorage();
+          setupNewRoundState();
+          renderQuestionList();
+          renderRound();
+          switchQuestionTab('list');
+        }
+      } catch (err) {
+        console.error("Format JSON tidak valid");
+      }
+    }
+
+    function saveQuestionsToStorage() {
+      localStorage.setItem('tangga_curi_poin_questions_v2', JSON.stringify(gameRounds));
+    }
+
+    /* =====================================================================
+       9. GRAND WINNER ANNOUNCEMENT & RESET
+       ===================================================================== */
+    function showWinnerAnnouncement() {
+      AudioEngine.playFanfare();
+      triggerConfetti();
+
+      const scoreA = gameState.teams[0].score;
+      const scoreB = gameState.teams[1].score;
+      const nameA = gameState.teams[0].name;
+      const nameB = gameState.teams[1].name;
+
+      document.getElementById('winTeamName0').textContent = nameA;
+      document.getElementById('winTeamName1').textContent = nameB;
+      document.getElementById('finalScore0').textContent = scoreA;
+      document.getElementById('finalScore1').textContent = scoreB;
+
+      const titleEl = document.getElementById('winnerTitle');
+      const subEl = document.getElementById('winnerSub');
+
+      if (scoreA > scoreB) {
+        titleEl.textContent = `${nameA} JUARA!`;
+        titleEl.className = "font-display font-black text-3xl sm:text-4xl text-rose-400 mt-1 uppercase";
+        subEl.textContent = `Selamat kepada ${nameA} yang memenangkan pertarungan Tangga Curi Poin 10 Babak dengan skor ${scoreA} pts!`;
+      } else if (scoreB > scoreA) {
+        titleEl.textContent = `${nameB} JUARA!`;
+        titleEl.className = "font-display font-black text-3xl sm:text-4xl text-sky-400 mt-1 uppercase";
+        subEl.textContent = `Selamat kepada ${nameB} yang memenangkan pertarungan Tangga Curi Poin 10 Babak dengan skor ${scoreB} pts!`;
+      } else {
+        titleEl.textContent = `SKOR IMBANG (SERI)!`;
+        titleEl.className = "font-display font-black text-3xl sm:text-4xl text-amber-400 mt-1 uppercase";
+        subEl.textContent = `Kedua tim sama-sama tangguh dengan perolehan skor kembar ${scoreA} pts!`;
+      }
+
+      document.getElementById('winnerModal').classList.remove('hidden');
+    }
+
+    function closeWinnerModal() {
+      const modal = document.getElementById('winnerModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function resetGameMatch() {
+      gameState.roundIndex = 0;
+      gameState.roundStatuses = Array(gameRounds.length).fill('Belum');
+      gameState.teams[0].score = 0;
+      gameState.teams[1].score = 0;
+      setupNewRoundState();
+      closeWinnerModal();
+      renderRound();
+    }
+
+    /* =====================================================================
+       10. LIGHTWEIGHT CANVAS CONFETTI (Zero external dependencies)
+       ===================================================================== */
+    let confettiParticles = [];
+    let confettiCanvas, confettiCtx;
+
+    function initConfetti() {
+      confettiCanvas = document.getElementById('confettiCanvas');
+      confettiCtx = confettiCanvas.getContext('2d');
+      resizeConfetti();
+      window.addEventListener('resize', resizeConfetti);
+      requestAnimationFrame(confettiLoop);
+    }
+
+    function resizeConfetti() {
+      if (!confettiCanvas) return;
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+
+    function triggerConfetti() {
+      const colors = ['#ef233c', '#00d2ff', '#f59e0b', '#10b981', '#a855f7', '#ffffff'];
+      for (let i = 0; i < 90; i++) {
+        confettiParticles.push({
+          x: window.innerWidth * 0.5 + (Math.random() - 0.5) * 200,
+          y: window.innerHeight * 0.4 + (Math.random() - 0.5) * 100,
+          vx: (Math.random() - 0.5) * 14,
+          vy: -Math.random() * 12 - 4,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotationSpeed: (Math.random() - 0.5) * 10,
+          opacity: 1
+        });
+      }
+    }
+
+    function confettiLoop() {
+      if (confettiCtx && confettiCanvas) {
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+        for (let i = confettiParticles.length - 1; i >= 0; i--) {
+          const p = confettiParticles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35; // Gravity
+          p.rotation += p.rotationSpeed;
+          p.opacity -= 0.008;
+
+          confettiCtx.save();
+          confettiCtx.translate(p.x, p.y);
+          confettiCtx.rotate((p.rotation * Math.PI) / 180);
+          confettiCtx.fillStyle = p.color;
+          confettiCtx.globalAlpha = Math.max(0, p.opacity);
+          confettiCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          confettiCtx.restore();
+
+          if (p.opacity <= 0 || p.y > window.innerHeight) {
+            confettiParticles.splice(i, 1);
+          }
+        }
+      }
+      requestAnimationFrame(confettiLoop);
+    }
+  
+  </script>
+</body>
+</html>

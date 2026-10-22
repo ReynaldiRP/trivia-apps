@@ -579,7 +579,7 @@
         <div class="p-3.5 rounded-2xl bg-amber-100/70 border-2 border-black shadow-neo-sm">
           <span class="font-black text-amber-900 uppercase tracking-wide block mb-1">Catatan Panduan Host:</span>
           <p id="hostSecretNotes" class="text-amber-950 leading-relaxed font-medium">
-            Berikan waktu diskusi 15 detik. Jika tim pertama salah tebak, langsung tekan 'Salah / Lockout' agar kontrol otomatis berpindah ke tim lawan dengan petunjuk tingkat 2!
+            Berikan waktu diskusi 15 detik per anak tangga. Jika salah/habis waktu, tekan 'Salah / Oper [X]' untuk melempar giliran ke tim lawan hingga tangga ke-4 (400 &rarr; 300 &rarr; 200 &rarr; 100 Poin).
           </p>
         </div>
       </div>
@@ -600,9 +600,9 @@
       <!-- Center: Action Controls -->
       <div class="flex items-center space-x-1.5 sm:space-x-2 flex-wrap justify-center">
         <!-- Lockout / Wrong Button -->
-        <button onclick="recordWrong()" class="btn-neo flex items-center space-x-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-[#EF4444] hover:bg-[#DC2626] text-white font-black text-xs sm:text-sm tracking-wide" title="Salah / Kunci Tim Aktif & Buka Curi Poin (Key: X / Space)">
+        <button id="wrongActionBtn" onclick="recordWrong()" class="btn-neo flex items-center space-x-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-[#EF4444] hover:bg-[#DC2626] text-white font-black text-xs sm:text-sm tracking-wide" title="Salah / Oper Giliran ke Lawan (Key: X / Space)">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
-          <span class="hidden xs:inline">SALAH /</span> <span>LOCKOUT [X]</span>
+          <span id="wrongActionBtnText">SALAH / OPER [X]</span>
         </button>
 
         <!-- Manual Reveal Next Clue -->
@@ -662,7 +662,7 @@
           </div>
         </div>
         <div class="flex justify-between items-center p-2.5 rounded-xl bg-zinc-50 border-2 border-zinc-200">
-          <span class="text-zinc-800 font-bold">Salah / Lockout & Oper Curi Poin</span>
+          <span class="text-zinc-800 font-bold">Salah / Oper Giliran & Turun Tangga (Ping-Pong)</span>
           <div>
             <kbd class="px-2 py-1 rounded bg-white text-red-700 border-2 border-black shadow-neo-xs font-mono font-black">X</kbd> atau <kbd class="px-2 py-1 rounded bg-white text-red-700 border-2 border-black shadow-neo-xs font-mono font-black">Space</kbd>
           </div>
@@ -1159,17 +1159,37 @@ const CLUE_POINTS = [400, 300, 200, 100];
       const statusEl = document.getElementById('statusCallout');
       if (gameState.status === 'SOLVED') {
         const winner = gameState.teams[gameState.activeTeam].name;
-        statusEl.innerHTML = `🏆 <span class="text-emerald-700 font-black">${winner} BERHASIL MENJAWAB!</span>`;
+        const ptsWon = CLUE_POINTS[gameState.currentClueStep];
+        statusEl.innerHTML = `🏆 <span class="text-emerald-700 font-black">${winner} BERHASIL MENJAWAB! (+${ptsWon} Pts)</span>`;
       } else if (gameState.status === 'FAILED') {
         statusEl.innerHTML = `❌ <span class="text-rose-600 font-black">KEDUA TIM GAGAL / WAKTU HABIS</span>`;
       } else {
         const activeName = gameState.teams[gameState.activeTeam].name;
         const pts = CLUE_POINTS[gameState.currentClueStep];
-        const isSteal = gameState.teams[1 - gameState.activeTeam].locked;
-        if (isSteal) {
-          statusEl.innerHTML = `🚨 <span class="text-amber-600 font-black">CURI POIN!</span> Giliran: <span class="${gameState.activeTeam === 0 ? 'text-[#D81B60]' : 'text-[#0EA5E9]'} font-black">${activeName} (${pts} Pts)</span>`;
+        const step = gameState.currentClueStep;
+        const teamColor = gameState.activeTeam === 0 ? 'text-[#D81B60]' : 'text-[#0EA5E9]';
+
+        if (step === 0) {
+          statusEl.innerHTML = `🎯 <span class="text-zinc-600 font-black">Tangga 1:</span> Giliran <span class="${teamColor} font-black">${activeName} (${pts} Pts)</span>`;
+        } else if (step === 1) {
+          statusEl.innerHTML = `🚨 <span class="text-amber-600 font-black">Curi Poin Tangga 2:</span> Giliran <span class="${teamColor} font-black">${activeName} (${pts} Pts)</span>`;
+        } else if (step === 2) {
+          statusEl.innerHTML = `🔁 <span class="text-purple-600 font-black">Lempar Balik Tangga 3:</span> Giliran <span class="${teamColor} font-black">${activeName} (${pts} Pts)</span>`;
         } else {
-          statusEl.innerHTML = `Giliran Menjawab: <span class="${gameState.activeTeam === 0 ? 'text-[#D81B60]' : 'text-[#0EA5E9]'} font-black">${activeName} (${pts} Pts)</span>`;
+          statusEl.innerHTML = `🔥 <span class="text-rose-600 font-black">Kesempatan Akhir Tangga 4:</span> Giliran <span class="${teamColor} font-black">${activeName} (${pts} Pts)</span>`;
+        }
+      }
+
+      // Update Wrong/Oper button text dynamically
+      const wrongBtnText = document.getElementById('wrongActionBtnText');
+      const wrongBtn = document.getElementById('wrongActionBtn');
+      if (wrongBtnText && wrongBtn) {
+        if (gameState.currentClueStep < 3) {
+          wrongBtnText.textContent = "SALAH / OPER [X]";
+          wrongBtn.title = "Salah / Oper Giliran ke Lawan & Buka Tangga Berikutnya (Key: X / Space)";
+        } else {
+          wrongBtnText.textContent = "SALAH / HANGUS [X]";
+          wrongBtn.title = "Salah di Tangga Terakhir: Babak Hangus (Key: X / Space)";
         }
       }
 
@@ -1278,7 +1298,7 @@ const CLUE_POINTS = [400, 300, 200, 100];
       renderRound();
     }
 
-    // Triggered when current team is WRONG or PASSES
+    // Triggered when current team is WRONG or PASSES (Ping-Pong 4 Tangga)
     function recordWrong() {
       if (gameState.status !== 'PLAYING') return;
 
@@ -1286,11 +1306,10 @@ const CLUE_POINTS = [400, 300, 200, 100];
       const currentTeam = gameState.activeTeam;
       const opposingTeam = 1 - currentTeam;
 
-      // Lockout current team
-      gameState.teams[currentTeam].locked = true;
-
-      // If opposing team is already locked out, everyone failed!
-      if (gameState.teams[opposingTeam].locked) {
+      // If we are already at the final clue (Hint 4 / Step 3), both teams have failed all 4 rungs!
+      if (gameState.currentClueStep >= 3) {
+        gameState.teams[0].locked = true;
+        gameState.teams[1].locked = true;
         gameState.status = 'FAILED';
         gameState.roundStatuses[gameState.roundIndex] = 'Selesai';
         gameState.clueRevealed = [true, true, true, true];
@@ -1299,18 +1318,13 @@ const CLUE_POINTS = [400, 300, 200, 100];
         return;
       }
 
-      // If opponent can STEAL:
-      // Transfer control to opposing team
+      // Ping-pong rally: advance to next clue and switch active team
+      gameState.currentClueStep += 1;
+      gameState.clueRevealed[gameState.currentClueStep] = true;
       gameState.activeTeam = opposingTeam;
+      AudioEngine.playReveal();
 
-      // Reveal the next clue level if available
-      if (gameState.currentClueStep < 3) {
-        gameState.currentClueStep += 1;
-        gameState.clueRevealed[gameState.currentClueStep] = true;
-        AudioEngine.playReveal();
-      }
-
-      // Reset timer to 15s for the stealing team and auto-start
+      // Reset timer to 15s for the next team and auto-start
       resetTimer();
       startTimer();
 
@@ -1331,6 +1345,8 @@ const CLUE_POINTS = [400, 300, 200, 100];
       gameState.status = 'FAILED';
       gameState.roundStatuses[gameState.roundIndex] = 'Selesai';
       gameState.clueRevealed = [true, true, true, true];
+      gameState.teams[0].locked = true;
+      gameState.teams[1].locked = true;
       pauseTimer();
       renderRound();
     }

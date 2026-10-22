@@ -156,6 +156,21 @@
     body {
       padding-bottom: 7.5rem !important;
     }
+
+    /* Clue Step Badge - Solid Neo-Pop Square */
+    .clue-badge {
+      width: 3.75rem !important;
+      min-width: 3.75rem !important;
+      height: 3.4rem !important;
+      border-radius: 0.875rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 2px solid #18181B;
+      box-shadow: 2px 2px 0px #18181B;
+    }
   </style>
 </head>
 <body class="p-2 sm:p-3 md:px-5 md:pt-3">
@@ -422,9 +437,9 @@
         <div id="clueCard0" class="card-neo p-3 sm:p-3.5 transition-all duration-200">
           <div class="flex items-start space-x-3.5">
             <!-- Icon Badge -->
-            <div id="badgeClue0" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#D81B60] text-white font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0">
-              <span class="text-[9px] uppercase leading-none font-bold">TINGKAT 1</span>
-              <span>400</span>
+            <div id="badgeClue0" class="clue-badge bg-[#D81B60] text-white">
+              <span class="text-[9px] uppercase leading-none font-black tracking-tight whitespace-nowrap mb-0.5">TINGKAT 1</span>
+              <span class="font-display font-black text-xl leading-none">400</span>
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between gap-2">
@@ -449,9 +464,9 @@
         <div id="clueCard1" class="card-neo p-3 sm:p-3.5 transition-all duration-200 opacity-60">
           <div class="flex items-start space-x-3.5">
             <!-- Icon Badge -->
-            <div id="badgeClue1" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#F59E0B] text-zinc-950 font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0">
-              <span class="text-[9px] uppercase leading-none font-bold">TINGKAT 2</span>
-              <span>300</span>
+            <div id="badgeClue1" class="clue-badge bg-[#F59E0B] text-zinc-950">
+              <span class="text-[9px] uppercase leading-none font-black tracking-tight whitespace-nowrap mb-0.5">TINGKAT 2</span>
+              <span class="font-display font-black text-xl leading-none">300</span>
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between gap-2">
@@ -476,9 +491,9 @@
         <div id="clueCard2" class="card-neo p-3 sm:p-3.5 transition-all duration-200 opacity-60">
           <div class="flex items-start space-x-3.5">
             <!-- Icon Badge -->
-            <div id="badgeClue2" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#10B981] text-white font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0">
-              <span class="text-[9px] uppercase leading-none font-bold">TINGKAT 3</span>
-              <span>200</span>
+            <div id="badgeClue2" class="clue-badge bg-[#10B981] text-white">
+              <span class="text-[9px] uppercase leading-none font-black tracking-tight whitespace-nowrap mb-0.5">TINGKAT 3</span>
+              <span class="font-display font-black text-xl leading-none">200</span>
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between gap-2">
@@ -503,9 +518,9 @@
         <div id="clueCard3" class="card-neo p-3 sm:p-3.5 transition-all duration-200 opacity-60">
           <div class="flex items-start space-x-3.5">
             <!-- Icon Badge -->
-            <div id="badgeClue3" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#6366F1] text-white font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0">
-              <span class="text-[9px] uppercase leading-none font-bold">TINGKAT 4</span>
-              <span>100</span>
+            <div id="badgeClue3" class="clue-badge bg-[#6366F1] text-white">
+              <span class="text-[9px] uppercase leading-none font-black tracking-tight whitespace-nowrap mb-0.5">TINGKAT 4</span>
+              <span class="font-display font-black text-xl leading-none">100</span>
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between gap-2">
@@ -1190,7 +1205,7 @@ const CLUE_POINTS = [400, 300, 200, 100];
           statusPill.textContent = "✦ DIBUKA";
           statusPill.className = "text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border-2 border-black shadow-neo-xs";
 
-          badgeEl.className = `w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${theme.bg} ${theme.text} font-display font-black text-base flex flex-col items-center justify-center border-2 border-black shadow-neo-sm flex-shrink-0`;
+          badgeEl.className = `clue-badge ${theme.bg} ${theme.text}`;
         } else {
           cardEl.classList.add('opacity-60', 'bg-zinc-50');
           cardEl.classList.remove('bg-white');
@@ -1201,7 +1216,7 @@ const CLUE_POINTS = [400, 300, 200, 100];
           statusPill.textContent = "🔒 TERKUNCI";
           statusPill.className = "text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600 border border-zinc-300";
 
-          badgeEl.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-zinc-200 text-zinc-400 font-display font-black text-base flex flex-col items-center justify-center border-2 border-zinc-300 flex-shrink-0";
+          badgeEl.className = "clue-badge bg-zinc-200 text-zinc-400 border-zinc-300 shadow-none";
         }
 
         // Highlight active clue card
